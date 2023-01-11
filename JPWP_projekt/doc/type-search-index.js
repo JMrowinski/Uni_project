@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"Main","l":"Gracz"},{"p":"Main","l":"Main"},{"p":"Main","l":"Muzyka"},{"p":"Main","l":"ProcesGry"},{"p":"Main","l":"Sterowanie"},{"p":"GenerowanieSwiata","l":"Tile"},{"p":"GenerowanieSwiata","l":"TileZarzadzanie"},{"p":"Main","l":"UI"}];updateSearchResults();

@@ -2,8 +2,17 @@
 
 import java.awt.image.BufferedImage;
 
+/**
+ * Klasa z której dziedziczą inne kafelki, implementuje różne właściwości kolizji
+ * @author Jakub Mrowiński
+ * 
+ */
+
 public class Tile {
 
 	public BufferedImage image;
-	public int collison = 0;		//0 - brak kolizji, 1 - przeszkoda kolizja - 1 hp, 2 - kolizja quiz
+	/**
+	 *Różne ustawienia kolizji bloków 
+	 */
+	public int collison = 0;
 }

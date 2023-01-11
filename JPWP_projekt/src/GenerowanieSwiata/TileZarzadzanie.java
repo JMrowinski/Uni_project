@@ -10,40 +10,39 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import Main.ProcesGry;
-
+/**
+ * Klasa zarządzająca importowaniem kafelek i generowaniem zasobów potrzebnych dla gry. Większość zmiennych została pominięta w opisie ponieważ są typowo zmiennymi pomocniczymi
+ * @author Jakub Mrowiński
+ */
 
 
 public class TileZarzadzanie {
 	ProcesGry pg;
-	public Tile[] tile;	//an array of tiles from res/tiles
+	/**Tablica do której wczytywane są tekstury bloków z folderu res/tiles*/
+	public Tile[] tile;
 	public int mapTileNum[][];
 	public int liczba_quizow;
+	/** Tablica przechowująca wygenerowane pytania do quizów matematycznych*/
+
 	public String[][] pytania_odpowiedzi;
-	//public int mapTileNum2[][];//square array representing map.txt as numbers equal to tiles ids
 	
 	public TileZarzadzanie(ProcesGry pg) {
 		
 		this.pg = pg;
-		
-		
-		tile = new Tile[20]; 		//10 possible tiles to import from res/tiles
-		mapTileNum = new int[pg.maxScreenCol][pg.worldGeneratorHeight];		//setting the size of mapTileNum based on screen size
-	//	mapTileNum2 = new int[pg.maxScreenCol][pg.worldGeneratorHeight];
-		
-		
+		tile = new Tile[20];
+		mapTileNum = new int[pg.maxScreenCol][pg.worldGeneratorHeight];
 		
 		getTileImage();
 		Generuj();
 		LosujRownania();
-		//System.out.println(pytania_odpowiedzi[0][0]);
 	}
 	
 	
-	///////////////////////
-	//WCZYTYWANIE TEKSTUR//
-	///////////////////////
+/**
+ * Wczytywanie tekstur do tablicy tekstur
+ */
 	
-	public void getTileImage() {		//loading tiles from resouces folder
+	public void getTileImage() {
 		
 		try {
 			
@@ -75,8 +74,6 @@ public class TileZarzadzanie {
 			
 			
 			
-			//ROZNE WERSJE SCIEZKI LEWEJ
-			
 			tile[6] = new Tile();
 			tile[6].image = ImageIO.read(getClass().getResourceAsStream("/tiles/path_left1.png"));
 			
@@ -86,7 +83,7 @@ public class TileZarzadzanie {
 			tile[8] = new Tile();
 			tile[8].image = ImageIO.read(getClass().getResourceAsStream("/tiles/path_left3.png"));
 			
-			//ROZNE WERSJE SCIEZKI PRAWEJ
+			
 			
 			tile[9] = new Tile();
 			tile[9].image = ImageIO.read(getClass().getResourceAsStream("/tiles/path_right1.png"));
@@ -97,7 +94,7 @@ public class TileZarzadzanie {
 			tile[11] = new Tile();
 			tile[11].image = ImageIO.read(getClass().getResourceAsStream("/tiles/path_right3.png"));
 			
-			//PRZESZKODY
+
 			
 			tile[12] = new Tile();
 			tile[12].image = ImageIO.read(getClass().getResourceAsStream("/tiles/fallen_tree.png"));
@@ -108,15 +105,7 @@ public class TileZarzadzanie {
 			
 			tile[14] = new Tile();
 			tile[14].image = ImageIO.read(getClass().getResourceAsStream("/tiles/path_middle.png"));
-			tile[14].collison = 2;
-			
-			//tile[15] = new Tile();
-			//tile[15].image = ImageIO.read(getClass().getResourceAsStream("/tiles/path_right3.png"));
-			
-			//tile[16] = new Tile();
-			//tile[16].image = ImageIO.read(getClass().getResourceAsStream("/tiles/path_right3.png"));
-			
-			
+			tile[14].collison = 2;				
 					
 		}catch(IOException e) {
 			e.printStackTrace();
@@ -124,20 +113,19 @@ public class TileZarzadzanie {
 	}
 	
 	
-	//////////////////////
-	//GENEROWANIE SWIATA//
-	//////////////////////
+/**
+ * Generowanie losowe współrzędnych elementów na świecie wraz z przeszkodami do kwadratowej tablicy
+ */
 	
 	public void Generuj() {
 		int waga, quiz = 0;
-		System.out.println("Generuje");
 		
 		for(int i=0; i<pg.maxScreenCol; i++) {
 			for(int j=0; j<pg.worldGeneratorHeight; j++) {  
 				
 				waga = (int)Math.floor(Math.random()*(100-0+1)+0);
 				
-				if(i==2) {				//krawedz sciezki lewa
+				if(i==2) {
 					if(waga>=0 && waga <=91) {
 						mapTileNum[i][j]=3;
 					}else if(waga>91 && waga<=94) {
@@ -147,9 +135,9 @@ public class TileZarzadzanie {
 					}else if(waga >97 && waga<=100) {
 						mapTileNum[i][j]=8;
 					}
-				}else if(i==3) {	//sciezka 
+				}else if(i==3) {
 
-					if(waga>=0 && waga <=20 && j>5 && j<3995) {
+					if(waga>=0 && waga <=20 && j>5 && j<3990) {
 						if(mapTileNum[i][j] != 19 && mapTileNum[i][j-1] != 19 && mapTileNum[i][j+1] != 19 && mapTileNum[i+1][j] != 19
 								&& mapTileNum[i+1][j+1] != 19 && mapTileNum[i+1][j-1] != 19) {
 
@@ -170,7 +158,7 @@ public class TileZarzadzanie {
 					
 				}else if(i==4) {
 					
-					if(waga>=0 && waga <=30 && j>5 && j<3995) {
+					if(waga>=0 && waga <=30 && j>5 && j<3990) {
 						if(mapTileNum[i][j] != 19 && mapTileNum[i][j-1] != 19 && mapTileNum[i][j+1] != 19 && mapTileNum[i+1][j] != 19
 								&& mapTileNum[i+1][j+1] != 19 && mapTileNum[i+1][j-1] != 19 && mapTileNum[i-1][j] != 19 && mapTileNum[i-1][j-1] != 19 && mapTileNum[i-1][j+1] != 19) {
 
@@ -194,7 +182,7 @@ public class TileZarzadzanie {
 					
 				}else if(i==5) {
 					
-					if(waga>=0 && waga <=80 && j>5 && j<3995) {
+					if(waga>=0 && waga <=80 && j>5 && j<3990) {
 						if(mapTileNum[i][j] != 19 && mapTileNum[i][j-1] != 19 && mapTileNum[i][j+1] != 19 && 
 								mapTileNum[i-1][j] != 19 && mapTileNum[i-1][j-1] != 19 && mapTileNum[i-1][j+1] != 19) {
 
@@ -213,7 +201,7 @@ public class TileZarzadzanie {
 						mapTileNum[i][j]=4;
 					}
 					
-				}else if(i==6) {		//krawedz sciezki prawa
+				}else if(i==6) {
 					if(waga>=0 && waga <=91) {
 						mapTileNum[i][j]=5;
 					}else if(waga>91 && waga<=94) {
@@ -223,7 +211,7 @@ public class TileZarzadzanie {
 					}else if(waga >97 && waga<=100) {
 						mapTileNum[i][j]=11;
 					}
-				}else {						//tlo, reszta pol
+				}else {	
 					if(waga>=0 && waga <=60) {
 						mapTileNum[i][j]=0;
 					}else if(waga>60 && waga<=97) {
@@ -235,8 +223,6 @@ public class TileZarzadzanie {
 					} 
 				}
 				
-				
-				//mapTileNum2[i][pg.worldGeneratorHeight-j-1]=x;
 			}
 		}
 		
@@ -246,7 +232,6 @@ public class TileZarzadzanie {
 				if(i == 3) {
 					if(mapTileNum[i][j]==13 || mapTileNum[i+1][j]==13 || mapTileNum[i+2][j]==13) {
 						quiz++;
-						//System.out.println(quiz);
 					}
 						
 				}
@@ -271,9 +256,10 @@ public class TileZarzadzanie {
 	}
 	
 	
-	////////////////////
-	//RYSOWANIE SWIATA//
-	////////////////////
+/**
+ * Rysowanie świata na podstawie wcześniej wygenerowanej tablicy, gdzie każda liczba ma przypisany blok tekstur
+ * @param g2
+ */
 	
 	public void draw(Graphics2D g2) {
 		
@@ -283,7 +269,6 @@ public class TileZarzadzanie {
 		
 		while(worldCol < pg.maxScreenCol && worldRow < pg.worldGeneratorHeight) {
 			
-					//gets the tile id from mapTileNum and uses it in g2.drawImage to chose tiles
 			int tileNum = mapTileNum[worldCol][worldRow];
 			int worldX = worldCol * pg.tileSize;
 			int worldY = worldRow * pg.tileSize;
@@ -300,22 +285,26 @@ public class TileZarzadzanie {
 
 			}
 			
-			worldCol++;		//changing position on screen so the tiles dont overlap
+			worldCol++;		
 			
-			if(worldCol == pg.maxScreenCol) {		//change rows if column ends
+			if(worldCol == pg.maxScreenCol) {		
 				worldCol = 0;
 				worldRow++;
 			}
 		}
 		
 	}
+	
+	/**
+	 * Funkcja losująca zbiór równań wraz z odpowiedziami, które mogą być przekazane dalej
+	 */
 
 	public void LosujRownania() {
 		
 
 	    Random rand = new Random();
 	    int poziomtrudnosci = 10;
-	    int granica1 = poziomtrudnosci;		//lepiej zeby oba byly parzyste, kiedys z innej funkcji skalowanie wzgledem czasu
+	    int granica1 = poziomtrudnosci;	
 	    int granica2 = poziomtrudnosci;
 	    String symbol = "";
 	    int znak;
@@ -327,72 +316,84 @@ public class TileZarzadzanie {
 	    
 	    String a, b, wynik1, wynik2, wynik3, wynik4, formula = "";
 	    String[] wyniki_losowe;
+	    wyniki_losowe = new String[5];
 
 
-	    //LOSOWANIE
-	    
-        x = (int)Math.floor(Math.random()*(granica1-1+1)+1);
-        y = (int)Math.floor(Math.random()*(granica2-1+1)+1);
-        znak = rand.nextInt(4);
-        
-        if(znak == 0) {
-        	symbol = "+";
-        	wynik = x + y;
-        }else if(znak == 1)
-        {
-        	symbol = "-";
-        	wynik = x - y;
-        }else if(znak == 2)
-        {
-        	symbol = "*";
-        	wynik = x * y;
-        }else if(znak == 3)
-        {
-        	y = (int)Math.floor(Math.random()*(granica2/2-1+1)+1);
-        	wynik = (int)Math.floor(Math.random()*(granica1/2-1+1)+1);
-        	x = wynik * y; // generowanie x/y w taki sposob aby liczba zawsze byla podzielna calkowita
-        	symbol = "/";
-        	
-        }
-        
-    		//wyliczenie pozostalych 3 odp
-    	do
-    	{
-    		pom1 = (int)Math.floor(Math.random()*(wynik-(-wynik)+1)+(-wynik));
-        	pom2 = (int)Math.floor(Math.random()*(wynik-(-wynik)+1)+(-wynik));
-        	pom3 = (int)Math.floor(Math.random()*(wynik-(-wynik)+1)+(-wynik));
-    	}
-    	while( pom1 == wynik || pom2 == wynik || pom3 == wynik || pom1 == pom2 || pom1 == pom3 || pom2 == pom3);
-    	
-    	//KONWERSJA
-    	
-    	wyniki_losowe = new String[5];
-    	a = String.valueOf(x);
-    	b = String.valueOf(y);
-    	wynik1 = String.valueOf(wynik);
-    	wynik2 = String.valueOf(pom1);
-    	wynik3 = String.valueOf(pom2);
-    	wynik4 = String.valueOf(pom3);
-    	wyniki_losowe[1] = wynik1;
-    	wyniki_losowe[2] = wynik2;
-    	wyniki_losowe[3] = wynik3;
-    	wyniki_losowe[4] = wynik4;
-    	wyniki_losowe[0] = formula;
-    	formula = a + " " + symbol + " " + b + " = ?";
+
 	    
     	
-    	//TABLICA
+
 	    
-	    	pytania_odpowiedzi = new String[liczba_quizow][5];
+	    	pytania_odpowiedzi = new String[liczba_quizow*4][6];
 	    	int pole = 0;
 	    	String podtrzymanie;
 	    	
-	    	for(int i = 0; i<liczba_quizow; i++) {
+	    	
+	    	for(int i = 0; i<liczba_quizow*4; i++) {
+	    		
+	    		
+	    	    
+	    	    
+	            x = (int)Math.floor(Math.random()*(granica1-1+1)+1);
+	            y = (int)Math.floor(Math.random()*(granica2-1+1)+1);
+	            
+	            znak = rand.nextInt(4);
+	            
+	            
+	            
+	            if(znak == 0) {
+	            	symbol = "+";
+	            	wynik = x + y;
+	            }else if(znak == 1)
+	            {
+	            	symbol = "-";
+	            	wynik = x - y;
+	            }else if(znak == 2)
+	            {
+	            	symbol = "*";
+	            	wynik = x * y;
+	            }else if(znak == 3)
+	            {
+	            	y = (int)Math.floor(Math.random()*(granica2/2-1+1)+1);
+	            	wynik = (int)Math.floor(Math.random()*(granica1/2-1+1)+1);
+	            	x = wynik * y; 
+	            	symbol = "/";
+	            	
+	            }
+	            
+	            
+	        		
+	        	do
+	        	{
+	        		pom1 = (int)Math.floor(Math.random()*(wynik-(-wynik)+5)+(-wynik));
+	            	pom2 = (int)Math.floor(Math.random()*(wynik-(-wynik)+2)+(-wynik));
+	            	pom3 = (int)Math.floor(Math.random()*(wynik-(-wynik)+10)+(-wynik));
+	        	}
+	        	while( pom1 == wynik || pom2 == wynik || pom3 == wynik || pom1 == pom2 || pom1 == pom3 || pom2 == pom3);
+	        	
+	        	
+	        	
+	        	
+	        	
+	        	a = String.valueOf(x);
+	        	b = String.valueOf(y);
+	        	wynik1 = String.valueOf(wynik);
+	        	wynik2 = String.valueOf(pom1);
+	        	wynik3 = String.valueOf(pom2);
+	        	wynik4 = String.valueOf(pom3);
+	        	formula = a + " " + symbol + " " + b + " = ?";
+	        	wyniki_losowe[1] = wynik1;
+	        	wyniki_losowe[2] = wynik2;
+	        	wyniki_losowe[3] = wynik3;
+	        	wyniki_losowe[4] = wynik4;
+	        	wyniki_losowe[0] = formula;
+	        	
+
+	    		
 
 	    		pole = (int)Math.floor(Math.random()*(4-1+1)+1);
 	    		for(int j = 0; j<5; j++) {
 	    			if(j == 0) {
-	    				System.out.println(pole);
 	    				pytania_odpowiedzi[i][j] = wyniki_losowe[j];
 	    			}
 	    			pytania_odpowiedzi[i][j] = wyniki_losowe[j];
@@ -401,7 +402,12 @@ public class TileZarzadzanie {
 	    		
 	    		podtrzymanie = pytania_odpowiedzi[i][pole];
 				pytania_odpowiedzi[i][pole] = wyniki_losowe[1];
-				pytania_odpowiedzi[i][1] = podtrzymanie;
+				pytania_odpowiedzi[i][1] = podtrzymanie;	
+				pytania_odpowiedzi[i][5] = wyniki_losowe[1];
+	    	}
+	    	
+	    	for(int k=0; k<liczba_quizow*4; k++) {
+
 	    	}
 	    	
 

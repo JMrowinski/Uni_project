@@ -12,6 +12,12 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+
+/**
+ * Klasa odpowiedzialna za rysowanie UI dla różnych stanów gry
+ * @author Jakub Mrowiński
+ *
+ */
 public class UI {
 	
 	ProcesGry pg;
@@ -21,6 +27,7 @@ public class UI {
 	Graphics2D g2;
 	public int commandNum = 0;
 	public int commandNumP = 0;
+	public int commandNumD = 0;
 	
 	
 	
@@ -56,7 +63,10 @@ public class UI {
 	
 
 	
-	
+	/**
+	 * Funkcja rysująca na ekranie w zależności w jakim stanie gry jesteśmy(pauza, menu, gra itp.)
+	 * @param g2
+	 */
 	public void draw(Graphics2D g2) {
 		
 		this.g2 = g2;
@@ -76,22 +86,27 @@ public class UI {
 			UIintro();
 		}
 		
-		if(pg.StanGry == pg.Opcje) {
-			UIopcje();
-		}
 		
 		if(pg.StanGry == pg.Quiz) {
 			UIquiz();
 		}
+		
+		if(pg.StanGry == pg.Porazka) {
+			UIporazka();
+		}	
+
 	}
 	
+	/**
+	 * Rysowanie menu głównego
+	 */
 	public void UIintro() {
 		
 		//TLO
 		g2.setColor(new Color (168, 181, 174));
 		g2.fillRect(0, 0, pg.screenWidth, pg.screenHeight);
 		
-		//NAPISY TYTUŁOWE
+
 		
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 96));
 		String text = "No  cap";
@@ -127,7 +142,7 @@ public class UI {
 		
 		//NEW GAME
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32));
-		text = "New  game";
+		text = "Play";
 		y += pg.tileSize;
 		g2.setColor(new Color(151, 164, 157));
 		g2.drawString(text, x+3, y+3);
@@ -141,7 +156,8 @@ public class UI {
 			g2.drawString(">", x-pg.tileSize/5, y);
 		}
 		
-		//NEW GAME
+		/*
+		//High score
 		g2.setFont(Arcade.deriveFont(Font.BOLD, 32));
 		text = "High  score";
 		y += pg.tileSize/2;
@@ -172,6 +188,7 @@ public class UI {
 			g2.setColor(Color.white);
 			g2.drawString(">", x-pg.tileSize/5, y);
 		}
+		*/
 		
 		//QUIT
 		g2.setFont(Arcade.deriveFont(Font.BOLD, 32));
@@ -181,7 +198,7 @@ public class UI {
 		g2.drawString(text, x+3, y+3);
 		g2.setColor(Color.white);
 		g2.drawString(text, x, y);
-		if(commandNum == 3) {
+		if(commandNum == 1) {
 			g2.setFont(Symbols.deriveFont(Font.BOLD, 20));
 			g2.setColor(new Color(151, 164, 157));
 			g2.drawString(">", x-pg.tileSize/5+3, y+3);
@@ -190,7 +207,10 @@ public class UI {
 		}
 		
 	}
-	
+
+	/**
+	 * Rysowanie elementow podczas gry, pasek zdrowia i wynik
+	 */
 	public void UIgra() {
 		
 		if(pg.Gracz.health == 2 && pg.Gracz.collisionON == false) {
@@ -228,7 +248,6 @@ public class UI {
 		}
 		
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 48));
-		g2.setColor(Color.white);
 		String text = "Score    ";
 		int length = (int)g2.getFontMetrics().getStringBounds( text , g2).getWidth();
 		int width = (int)g2.getFontMetrics().getStringBounds(text, g2).getHeight();
@@ -243,6 +262,9 @@ public class UI {
 		
 	}
 	
+	/**
+	 * Rysowanie ekranu pauzy
+	 */
 	public void UIpauza() {
 		
 		g2.setColor(new Color (0, 0, 0, 80));
@@ -281,6 +303,7 @@ public class UI {
 			g2.drawString(">", x-pg.tileSize/5, y);
 		}
 		
+		/*
 		//OPCJE
 		g2.setFont(Arcade.deriveFont(Font.BOLD, 32));
 		text = "Options";
@@ -297,6 +320,8 @@ public class UI {
 			g2.drawString(">", x-pg.tileSize/5, y);
 		}
 		
+		*/
+		
 		//MENU
 		g2.setFont(Arcade.deriveFont(Font.BOLD, 32));
 		text = "Main  menu";
@@ -305,7 +330,7 @@ public class UI {
 		g2.drawString(text, x+3, y+3);
 		g2.setColor(Color.white);
 		g2.drawString(text, x, y);
-		if(commandNumP == 2) {
+		if(commandNumP == 1) {
 			g2.setFont(Symbols.deriveFont(Font.BOLD, 20));
 			g2.setColor(new Color(0, 0, 0, 50));
 			g2.drawString(">", x-pg.tileSize/5+3, y+3);
@@ -318,14 +343,10 @@ public class UI {
 		
 		
 	}
-
-	public void UIopcje() {
-		
-		g2.setColor(new Color (168, 181, 174));
-		g2.fillRect(0, 0, pg.screenWidth, pg.screenHeight);
-		
-	}
-
+	
+	/**
+	 * Rysowanie interfejsu oraz równań z tabeli pytań podczas quizu
+	 */
 	public void UIquiz() {
 		
 		//TŁO
@@ -346,7 +367,7 @@ public class UI {
 		g2.fillRect(pg.screenWidth/2-pg.tileSize+3,  pg.screenHeight/3+3, pg.tileSize*2, pg.tileSize);
 		
 		//ramka
-		g2.setColor(new Color (228, 219, 160));
+		g2.setColor(new Color (171, 164, 123));
 		g2.fillRect(pg.screenWidth/4-pg.tileSize/2, pg.screenHeight/3, pg.tileSize, pg.tileSize);
 		g2.fillRect(pg.screenWidth*3/4-pg.tileSize/2, pg.screenHeight/3, pg.tileSize, pg.tileSize);
 		g2.fillRect(pg.screenWidth/2-pg.tileSize/2, pg.screenHeight/3+2*pg.tileSize, pg.tileSize, pg.tileSize);
@@ -354,7 +375,7 @@ public class UI {
 		g2.fillRect(pg.screenWidth/2-pg.tileSize,  pg.screenHeight/3, pg.tileSize*2, pg.tileSize);
 
 		//wypelnienie
-		g2.setColor(new Color (241, 234, 182));
+		g2.setColor(new Color (202, 193, 138));
 		g2.fillRect(pg.screenWidth/4-pg.tileSize/2+5, pg.screenHeight/3+5, pg.tileSize-10, pg.tileSize-10);
 		g2.fillRect(pg.screenWidth*3/4-pg.tileSize/2+5, pg.screenHeight/3+5, pg.tileSize-10, pg.tileSize-10);
 		g2.fillRect(pg.screenWidth/2-pg.tileSize/2+5, pg.screenHeight/3+2*pg.tileSize+5, pg.tileSize-10, pg.tileSize-10);
@@ -367,25 +388,25 @@ public class UI {
 		if(pg.Gracz.quizWskaznik == 1) {
 			g2.setColor(Color.white);
 			g2.fillRect(pg.screenWidth/2-pg.tileSize/2, pg.screenHeight/3-2*pg.tileSize, pg.tileSize, pg.tileSize);
-			g2.setColor(new Color (241, 234, 182));
+			g2.setColor(new Color (202, 193, 138));
 			g2.fillRect(pg.screenWidth/2-pg.tileSize/2+5, pg.screenHeight/3-2*pg.tileSize+5, pg.tileSize-10, pg.tileSize-10);
 		}
 		if(pg.Gracz.quizWskaznik == 2) {
 			g2.setColor(Color.white);
 			g2.fillRect(pg.screenWidth*3/4-pg.tileSize/2, pg.screenHeight/3, pg.tileSize, pg.tileSize);
-			g2.setColor(new Color (241, 234, 182));
+			g2.setColor(new Color (202, 193, 138));
 			g2.fillRect(pg.screenWidth*3/4-pg.tileSize/2+5, pg.screenHeight/3+5, pg.tileSize-10, pg.tileSize-10);
 		}
 		if(pg.Gracz.quizWskaznik == 3) {
 			g2.setColor(Color.white);
 			g2.fillRect(pg.screenWidth/2-pg.tileSize/2, pg.screenHeight/3+2*pg.tileSize, pg.tileSize, pg.tileSize);
-			g2.setColor(new Color (241, 234, 182));
+			g2.setColor(new Color (202, 193, 138));
 			g2.fillRect(pg.screenWidth/2-pg.tileSize/2+5, pg.screenHeight/3+2*pg.tileSize+5, pg.tileSize-10, pg.tileSize-10);
 		}
 		if(pg.Gracz.quizWskaznik == 4) {
 			g2.setColor(Color.white);
 			g2.fillRect(pg.screenWidth/4-pg.tileSize/2, pg.screenHeight/3, pg.tileSize, pg.tileSize);
-			g2.setColor(new Color (241, 234, 182));
+			g2.setColor(new Color (202, 193, 138));
 			g2.fillRect(pg.screenWidth/4-pg.tileSize/2+5, pg.screenHeight/3+5, pg.tileSize-10, pg.tileSize-10);
 		}
 		
@@ -396,11 +417,161 @@ public class UI {
 		
 		//NAPISY
 		
+		String text;
+		int y = 0;
+		int x = 0;
 		
 		
+		//FORMULA
+		
+		text = pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][0];
+		g2.setFont(Symbols.deriveFont(Font.BOLD, 22));
+		int length = (int)g2.getFontMetrics().getStringBounds( text , g2).getWidth();
+		int width = (int)g2.getFontMetrics().getStringBounds(text, g2).getHeight();
+		x = pg.screenWidth/2-pg.tileSize + pg.tileSize - length/2;
+		y = pg.screenHeight/3 + pg.tileSize/2 + width/2;
+		g2.setColor(new Color(0, 0, 0, 50));
+		g2.drawString(text, x+3, y+3);
+		g2.setColor(Color.white);
+		g2.drawString(text, x, y);
+		//g2.drawString(text, pg.screenWidth/2-pg.tileSize,  pg.screenHeight/3);	
+		
+		// ODP1
+		
+		text = pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][1];
+		g2.setFont(Symbols.deriveFont(Font.BOLD, 32));
+		length = (int)g2.getFontMetrics().getStringBounds( text , g2).getWidth();
+		width = (int)g2.getFontMetrics().getStringBounds(text, g2).getHeight();
+		x = pg.screenWidth/2-pg.tileSize/2 + pg.tileSize/2 - length/2;
+		y = pg.screenHeight/3-2*pg.tileSize + pg.tileSize/2 + width/2;
+		g2.setColor(new Color(0, 0, 0, 50));
+		g2.drawString(text, x+3, y+3);
+		g2.setColor(Color.white);
+		g2.drawString(text, x, y);
+		//g2.drawString(text, pg.screenWidth/2-pg.tileSize/2 + pg.tileSize/2, pg.screenHeight/3-2*pg.tileSize + pg.tileSize/2);
+		
+		//ODP2
+		
+		text = pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][2];
+		g2.setFont(Symbols.deriveFont(Font.BOLD, 32));
+		length = (int)g2.getFontMetrics().getStringBounds( text , g2).getWidth();
+		width = (int)g2.getFontMetrics().getStringBounds(text, g2).getHeight();
+		x = pg.screenWidth*3/4-pg.tileSize/2 +pg.tileSize/2 - length/2;
+		y = pg.screenHeight/3 +pg.tileSize/2 + width/2;
+		g2.setColor(new Color(0, 0, 0, 50));
+		g2.drawString(text, x+3, y+3);
+		g2.setColor(Color.white);
+		g2.drawString(text, x, y);
+		//g2.drawString(text, pg.screenWidth*3/4-pg.tileSize/2, pg.screenHeight/3);	
+		
+		//ODP 3
+		
+		text = pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][3];
+		length = (int)g2.getFontMetrics().getStringBounds( text , g2).getWidth();
+		width = (int)g2.getFontMetrics().getStringBounds(text, g2).getHeight();
+		x = pg.screenWidth/2-pg.tileSize/2 +pg.tileSize/2 - length/2;
+		y = pg.screenHeight/3+2*pg.tileSize +pg.tileSize/2 + width/2;
+		g2.setColor(new Color(0, 0, 0, 50));
+		g2.drawString(text, x+3, y+3);
+		g2.setColor(Color.white);
+		g2.drawString(text, x, y);
+		//g2.drawString(text, pg.screenWidth/2-pg.tileSize/2, pg.screenHeight/3+2*pg.tileSize);	
+		
+		//ODP4
+		
+		text = pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][4];
+		length = (int)g2.getFontMetrics().getStringBounds( text , g2).getWidth();
+		width = (int)g2.getFontMetrics().getStringBounds(text, g2).getHeight();
+		x = pg.screenWidth/4-pg.tileSize/2 +pg.tileSize/2 - length/2;
+		y = pg.screenHeight/3 +pg.tileSize/2 + width/2;
+		g2.setColor(new Color(0, 0, 0, 50));
+		g2.drawString(text, x+3, y+3);
+		g2.setColor(Color.white);
+		g2.drawString(text, x, y);
+	//	g2.drawString(text, pg.screenWidth/4-pg.tileSize/2, pg.screenHeight/3);	
 		
 		
 
 	}
 	
+	/**
+	 * Rysowanie ekranu po przegraniu gry
+	 */
+	public void UIporazka() {
+		
+		g2.setColor(new Color (0, 0, 0, 80));
+		g2.fillRect(0, 0, pg.screenWidth, pg.screenHeight);
+		
+		g2.setFont(Arcade.deriveFont(Font.BOLD, 96));
+		String text = "YOU  DIED";
+		int length = (int)g2.getFontMetrics().getStringBounds( text , g2).getWidth();
+		int width = (int)g2.getFontMetrics().getStringBounds(text, g2).getHeight();
+		int x = pg.screenWidth/2 - length/2;
+		int y = pg.tileSize*2;
+		
+		//CIEN
+		g2.setColor(new Color(0, 0, 0, 50));
+		g2.drawString(text, x+5, y+5);
+		
+		//GLOWNY NAPIS
+		g2.setColor(Color.white);
+		g2.drawString(text, x, y);
+		
+		//Retry
+		g2.setFont(Arcade.deriveFont(Font.BOLD, 32));
+		text = "Retry";
+		y += pg.tileSize;
+		g2.setColor(new Color(0, 0, 0, 50));
+		
+		g2.drawString(text, x+3, y+3);
+		g2.setColor(Color.white);
+		g2.drawString(text, x, y);
+		if(commandNumD == 0) {
+			g2.setFont(Symbols.deriveFont(Font.BOLD, 20));
+			g2.setColor(new Color(0, 0, 0, 50));
+			g2.drawString(">", x-pg.tileSize/5+3, y+3);
+			g2.setColor(Color.white);
+			g2.drawString(">", x-pg.tileSize/5, y);
+		}
+		
+		/*
+		
+		//high score
+		g2.setFont(Arcade.deriveFont(Font.BOLD, 32));
+		text = "High  score";
+		y += pg.tileSize/2;
+		g2.setColor(new Color(151, 164, 157));
+		g2.drawString(text, x+3, y+3);
+		g2.setColor(Color.white);
+		g2.drawString(text, x, y);
+		if(commandNumD == 1) {
+			g2.setFont(Symbols.deriveFont(Font.BOLD, 20));
+			g2.setColor(new Color(151, 164, 157));
+			g2.drawString(">", x-pg.tileSize/5+3, y+3);
+			g2.setColor(Color.white);
+			g2.drawString(">", x-pg.tileSize/5, y);
+		}
+		
+		*/
+		
+		//menu
+		g2.setFont(Arcade.deriveFont(Font.BOLD, 32));
+		text = "Main  menu";
+		y += pg.tileSize/2;
+		g2.setColor(new Color(0, 0, 0, 50));
+		g2.drawString(text, x+3, y+3);
+		g2.setColor(Color.white);
+		g2.drawString(text, x, y);
+		if(commandNumD == 1) {
+			g2.setFont(Symbols.deriveFont(Font.BOLD, 20));
+			g2.setColor(new Color(0, 0, 0, 50));
+			g2.drawString(">", x-pg.tileSize/5+3, y+3);
+			g2.setColor(Color.white);
+			g2.drawString(">", x-pg.tileSize/5, y);
+		}
+		
+		
+	}
+
 }
+

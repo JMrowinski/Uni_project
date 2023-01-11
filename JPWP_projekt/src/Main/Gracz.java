@@ -4,51 +4,61 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.imageio.ImageIO;
 
+/**
+ * Klasa odpowiedzialna za przechowywanie parametrów gracza, animację oraz detekcję kolizji
+ * @author Jakub Mrowiński
+ */
 
 public class Gracz{
 	
+	/**Wymiary generowanego świata*/
 	public int worldX, worldY;
+	/**Prędkość poruszania się postaci*/
 	public int speed;
+	/**Zdrowie postaci*/
 	public int health;
+	/**Wynik postaci*/
 	public int score;
+	/**Zmienna wykorzystywana przy wykrywaniu kolizji z przeszkodą*/
 	public boolean collisionON;
+	/**Zmienna wykorzystywana przy wykrywaniu kolizji z quizem*/
 	public boolean quizCollision;
-	int stoper;
-	int odpowiedzi;
-	int quizWskaznik;
+	//**Zmienne pomocnicze*/
+	int stoper, odpowiedzi, quizWskaznik;
+	/**Hitbox postaci*/
 	public Rectangle solidArea;
-	
-	public BufferedImage up1, up2, up3, up4, up2_dmg, up4_dmg;	//states for animation purposes
-	public String direction;		//useful to determine which frame of animation to play
-	
-	public int spriteWalk= 0;	//used to alter frames in animation
-	public int spriteNumWalk = 1;		//there are only 2 keyframes 1 and 2
-	
-	public int spriteRoll = 0;
-	public int spriteNumRoll = 1;
-	
-	String pytanie;
-	int wybierz_pole_tablicy;
-	int numer_odpowiedzi_z_quizu;
-
+	/** Wczytywanie klatek do animacji*/
+	public BufferedImage up1, up2, up3, up4, up2_dmg, up4_dmg;
+	/**Zmienna określająca stan w jakiej jest postać*/
+	public String direction;		
+	/**Zmienne potrzebne do odliczania ilości klatek*/
+	public int spriteWalk= 0, spriteNumWalk = 1;
+	/**Zmienna wykorzystywana do zliczania wystąpień pytań i wywoływania kolejnych z tabeli pytań*/
+	public int licznik_quiz;
 	
 	ProcesGry pg;
 	Sterowanie Ster;
 	
-	public  int screenX;
-	public  int screenY;
+	/** wymiary monitora*/
+	public  int screenX, screenY;
+
 	
-	public Gracz(ProcesGry pg, Sterowanie Ster) {
+	public Gracz(ProcesGry pg, Sterowanie Ster){
 		
 		this.pg = pg;
 		this.Ster = Ster;
 		
-		
-		
+
+		/**
+		 * Prostokąt symululujący hitbox postaci
+		 */
 		solidArea = new Rectangle(0, 0, 128, 128);
 		solidArea.x = 32;
 		solidArea.y = 32;
@@ -61,25 +71,31 @@ public class Gracz{
 	
 	}
 	
-	public void WartosciStartowe() {		//wartosci startowe dla gracz
+	/**
+	 * Funkcja resetująca wszystkie wartości dla gracza w sytuacji rozpoczęcia nowej gry
+	 */
+	
+	public void WartosciStartowe() {
 		worldX = pg.tileSize * pg.maxScreenCol;
-		worldY = pg.tileSize * pg.maxScreenRow + (pg.worldGeneratorHeight-pg.maxScreenRow-2)*pg.tileSize;
+		worldY = pg.tileSize * pg.maxScreenRow + (pg.worldGeneratorHeight-pg.maxScreenRow-4)*pg.tileSize;
 		speed = 5;
 		health = 3;
 		score = 0;
-		direction = "up";	//idle frame
+		direction = "up";
 		collisionON = true;
 		quizCollision = true;
 		screenX = pg.maxScreenRow/2*pg.tileSize;
 		screenY = pg.maxScreenCol/2*pg.tileSize + pg.tileSize;
 		Ster.pozycja = 1;
-	//	liczba_quizow = 0;
+		licznik_quiz = 0;
 	}
 	
-	
+	/**
+	 * Funkcja wczytująca klatki do animacji ruchu postaci
+	 */
 	public void WczytajZasobyGracza() {
 		
-		try {		//importing animation frames from res folder
+		try {
 			
 			up1 = ImageIO.read(getClass().getResourceAsStream("/Gracz/walk1.png"));
 			up2 = ImageIO.read(getClass().getResourceAsStream("/Gracz/walk2.png"));
@@ -93,9 +109,11 @@ public class Gracz{
 			e.printStackTrace();
 		}
 	}
+		
 	
-	
-	
+	/**
+	 * Aktualizowanie informacji o graczu 60 razy na sekundę w klasie ProcesGry
+	 */
 	public void update() {
 		
 			if(Ster.wcisnietyLewy == true) {
@@ -117,7 +135,6 @@ public class Gracz{
 
 				
 				
-				//ZMIANA LINII
 				worldY -= speed;
 			if(Ster.pozycja == 0) {
 				screenX = pg.maxScreenRow/2*pg.tileSize - pg.tileSize;
@@ -128,9 +145,9 @@ public class Gracz{
 			}
 				
 			
-			//ANIMACJA CHODZENIA
+
 			spriteWalk++;
-			if(spriteWalk > 5) {			//licznik to zmian klatek animacji
+			if(spriteWalk > 5) {
 				if(spriteNumWalk == 1) {
 					spriteNumWalk = 2;
 				}
@@ -147,28 +164,10 @@ public class Gracz{
 			}
 			
 			
-			//ANIMACJA SKOKU W BOK
-			spriteRoll++;
-			if(spriteRoll > 2) {			//licznik to zmian klatek animacji, kiedys animacja inna niz chodzenia, moze zmienie
-				if(spriteNumRoll == 1) {
-					spriteNumRoll = 2;
-				}
-				else if(spriteNumRoll == 2) {
-					spriteNumRoll = 3;
-				}
-				else if(spriteNumRoll == 3) {
-					spriteNumRoll = 4;
-				}
-				else if(spriteNumRoll == 4) {
-					spriteNumRoll = 1;
-				}
-				
-				
-				spriteRoll = 0;
-			}
+
 			
 			
-			//PRZESZKODY I KOLIZJA 
+
 			int lewaKrawedz = screenX+solidArea.x;
 			int prawaKrawedz = screenX+solidArea.x+solidArea.width;
 			int gornaKrawedz = worldY+solidArea.y;
@@ -204,15 +203,10 @@ public class Gracz{
 					pg.StanGry = pg.Quiz;
 					odpowiedzi = 0;
 					quizWskaznik = 0;
-					System.out.println(pg.TileZ.liczba_quizow);
 					
-					for(int i = 0; i<4; i++) {
-						//System.out.println(pg.randomizer.pytania_odpowiedzi[i][0]);
-					}
 
-					if(odpowiedzi == 4) {
-						pg.StanGry = pg.Gra;
-					}
+
+					
 					
 					quizCollision = false;
 					stoper = pg.WewnetrznyZegar;
@@ -228,7 +222,7 @@ public class Gracz{
 			}
 			
 			
-			//WYNIK
+
 			
 			score = pg.WewnetrznyZegar/10;
 					
@@ -237,12 +231,15 @@ public class Gracz{
 		
 
 
-	
+	/**
+	 * Funkcja rysująca animację poruszającej sie postaci
+	 * @param g2
+	 */
 	public void draw(Graphics2D g2) {
 		
 		BufferedImage image = null;
 		
-		switch(direction) {		//animowanie ruchow postaci, UP ZOSTAJE, DOWN USUNAC, ZNALEZC SPOSOB NA NIEZALEZNE PUSZCZANIE LEFT RIGHT
+		switch(direction) {
 		case "up":
 			if(spriteNumWalk == 1) {
 				image = up1;
@@ -286,20 +283,20 @@ public class Gracz{
 			}
 			break; 
 		case "collision":
-			if(spriteNumRoll == 1) {
+			if(spriteNumWalk == 1) {
 				image = up1;
 			}
-			if(spriteNumRoll == 2) {
+			if(spriteNumWalk == 2) {
 				image = up2_dmg;
 			}
-			if(spriteNumRoll == 3) {
+			if(spriteNumWalk == 3) {
 				image = up3;
 			}
-			if(spriteNumRoll == 4) {
+			if(spriteNumWalk == 4) {
 				image = up4_dmg;
 			}
 		}
 		
-		g2.drawImage(image, screenX, screenY, pg.tileSize, pg.tileSize, null);		//drawing using 2DGraphics, used for .draw(g2) function
+		g2.drawImage(image, screenX, screenY, pg.tileSize, pg.tileSize, null);
 	}
 }

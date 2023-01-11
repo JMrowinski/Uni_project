@@ -5,10 +5,15 @@ import java.awt.event.KeyListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Klasa odpowiedzialna za obsługę wejścia z klawiatury i sterowanie postacią oraz wyborami w menu
+ * @author Jakub Mrowiński
+ *
+ */
 public class Sterowanie implements KeyListener {
 	
 	ProcesGry pg;
-	public boolean wcisnietyLewy, wcisnietyPrawy; //do animacji
+	public boolean wcisnietyLewy, wcisnietyPrawy;
 	public int pozycja = 1;
 	Timer Opoznienie = new Timer();
 	
@@ -25,38 +30,32 @@ public class Sterowanie implements KeyListener {
 		
 		int code = e.getKeyCode();
 		
-		//MENU
+
 		if(pg.StanGry == pg.Menu) {
 			if(code == KeyEvent.VK_DOWN) {
 				pg.ui.commandNum++;
-				if(pg.ui.commandNum > 3) {
+				if(pg.ui.commandNum > 1) {
 					pg.ui.commandNum = 0;
 				}
 			}
 			if(code == KeyEvent.VK_UP) {
 				pg.ui.commandNum--;
 				if(pg.ui.commandNum < 0)
-					pg.ui.commandNum = 3;
+					pg.ui.commandNum = 1;
 			}
 			
 			if(code == KeyEvent.VK_ENTER) {
 				if(pg.ui.commandNum == 0) {
 					
-					//USTAWIENIA DLA RESETU GRY
+
 					pg.muzykaOdtworz(0);
 					pg.TileZ.Generuj();
 					pg.Gracz.WartosciStartowe();
 					pg.WewnetrznyZegar = 0;
-					pg.StanGry = 0;
+					pg.StanGry = pg.Gra;
 					
 				}
 				if(pg.ui.commandNum == 1) {
-					//dodac pozniej
-				}
-				if(pg.ui.commandNum == 2) {
-					//dodac pozniej
-				}
-				if(pg.ui.commandNum == 3) {
 					System.exit(0);
 					
 				}
@@ -69,9 +68,9 @@ public class Sterowanie implements KeyListener {
 				
 			if(pg.StanGry == pg.Gra) {
 				pg.StanGry = pg.Pauza;
-				//pg.muzykaStop();
+				pg.muzykaStop();
 			}else if(pg.StanGry == pg.Pauza) {
-				//pg.muzykaPauza(0);
+				pg.muzykaPauza(0);
 				pg.StanGry = pg.Gra;
 			}
 		}
@@ -81,36 +80,35 @@ public class Sterowanie implements KeyListener {
 			
 			if(code == KeyEvent.VK_DOWN) {
 				pg.ui.commandNumP++;
-				if(pg.ui.commandNumP > 2) {
+				if(pg.ui.commandNumP > 1) {
 					pg.ui.commandNumP = 0;
 				}
 			}
 			if(code == KeyEvent.VK_UP) {
 				pg.ui.commandNumP--;
 				if(pg.ui.commandNumP < 0)
-					pg.ui.commandNumP = 2;
+					pg.ui.commandNumP = 1;
 			}
 			
 			if(code == KeyEvent.VK_ENTER) {
-				if(pg.ui.commandNumP == 0) {		//RESTART	
+				if(pg.ui.commandNumP == 0) {
+					pg.muzykaOdtworz(0);
 					pg.TileZ.Generuj();
 					pg.Gracz.WartosciStartowe();
 					pg.WewnetrznyZegar = 0;
-					pg.StanGry = 0;
+					pg.StanGry = pg.Gra;
 				}
-				if(pg.ui.commandNumP == 1) {		//OPCJE
-					pg.StanGry = 5;
-				}
-				if(pg.ui.commandNumP == 2) {		//MENU
+
+				if(pg.ui.commandNumP == 1) {
 					pg.muzykaStop();
 					
-					pg.StanGry = 2;
+					pg.StanGry = pg.Menu;
 				}
 			}
 		}
 		
 		
-		//PODCZAS GRY
+
 		if(pg.StanGry == pg.Gra) {
 			
 			if(code == KeyEvent.VK_LEFT) {
@@ -146,7 +144,7 @@ public class Sterowanie implements KeyListener {
 		}
 		
 		
-		//QUIZ STEROWANIE
+
 		
 		if(pg.StanGry == pg.Quiz) {
 			
@@ -166,21 +164,101 @@ public class Sterowanie implements KeyListener {
 			if(code == KeyEvent.VK_ENTER) {
 				
 				if(pg.Gracz.quizWskaznik == 1) {
-					
+					System.out.println("1");
+					if(pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][1] != pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][5]) {
+						pg.Gracz.licznik_quiz++;
+
+						pg.StanGry = pg.Gra;
+						pg.Gracz.collisionON = false;
+						pg.Gracz.health--;
+					}else {
+						pg.Gracz.odpowiedzi++;
+						pg.Gracz.licznik_quiz++;
+					}
 				}
 				
 				if(pg.Gracz.quizWskaznik == 2) {
-					
+					System.out.println("2");
+					if(pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][2] != pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][5]) {
+						pg.Gracz.licznik_quiz++;
+
+						pg.StanGry = pg.Gra;
+						pg.Gracz.collisionON = false;
+						pg.Gracz.health--;
+					}else {
+						pg.Gracz.odpowiedzi++;
+						pg.Gracz.licznik_quiz++;
+					}
 				}
 				
 				if(pg.Gracz.quizWskaznik == 3) {
-					
+					System.out.println("3");
+					if(pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][3] != pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][5]) {
+						pg.Gracz.licznik_quiz++;
+
+						pg.StanGry = pg.Gra;
+						pg.Gracz.collisionON = false;
+						pg.Gracz.health--;
+					}else {
+						pg.Gracz.odpowiedzi++;
+						pg.Gracz.licznik_quiz++;
+					}
 				}
 				
 				if(pg.Gracz.quizWskaznik == 4) {
+					System.out.println("4");
+					if(pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][4] != pg.TileZ.pytania_odpowiedzi[pg.Gracz.licznik_quiz][5]) {
+						pg.Gracz.licznik_quiz++;
+
+						pg.StanGry = pg.Gra;
+						pg.Gracz.collisionON = false;
+						pg.Gracz.health--;
+					}else {
+						pg.Gracz.odpowiedzi++;
+						pg.Gracz.licznik_quiz++;
+					}
 					
 				}
 			}
+			
+			if(pg.Gracz.odpowiedzi == 4) {
+				pg.StanGry = pg.Gra;
+			}
+			
+		}
+		
+
+		
+		if(pg.StanGry == pg.Porazka) {
+			
+			if(code == KeyEvent.VK_DOWN) {
+				pg.ui.commandNumD++;
+				if(pg.ui.commandNumD > 1) {
+					pg.ui.commandNumD = 0;
+				}
+			}
+			if(code == KeyEvent.VK_UP) {
+				pg.ui.commandNumD--;
+				if(pg.ui.commandNumD < 0)
+					pg.ui.commandNumD = 1;
+			}
+			
+			if(code == KeyEvent.VK_ENTER) {
+				if(pg.ui.commandNumD == 0) {
+					pg.muzykaOdtworz(0);
+					pg.TileZ.Generuj();
+					pg.Gracz.WartosciStartowe();
+					pg.WewnetrznyZegar = 0;
+					pg.StanGry = pg.Gra;
+				}
+
+				if(pg.ui.commandNumD == 1) {		
+					pg.muzykaStop();
+					
+					pg.StanGry = pg.Menu;
+				}
+			}
+			
 		}
 		
 

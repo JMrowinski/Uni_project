@@ -4,53 +4,63 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 
 import GenerowanieSwiata.TileZarzadzanie;
 
-
+/**
+ * Główna klasa zarządzająca procesem gry. Odmierza ilość wykonywanych klatek oraz dostosowuje pod nie procesy.
+ * Zawiera informacje o wymiarach pola gry oraz rysuje je na ekranie (dziedziczy po klasie JPanel).
+ * @author Jakub Mrowiński
+ *
+ */
 
 public class ProcesGry extends JPanel implements Runnable{
 	
-	final int originalTileSize = 32;	//32x32 pixele
+	/**Rozmiar pojedyńczego kafelka, 32 x 32 pixele*/
+	final int originalTileSize = 32;
+	/**Ile razy powiększony na ekranie zostanie każdy kafelek*/
 	final int scale = 4;
-	public final int tileSize = originalTileSize * scale;	//128x128 po przeskalowaniu na ekran
+	/**Rozmiar kafelka który zostanie narysowany na ekranie*/
+	public final int tileSize = originalTileSize * scale;
+	/**Maksymalna ilość kafelków w kolumnie*/
 	public final int maxScreenCol = 9;
+	/**Maksymalna ilośc kafelków w rzędzie*/
 	public final int maxScreenRow = 8;
-	public final int screenWidth = tileSize * maxScreenCol;	//1152p
-	public final int screenHeight = tileSize * maxScreenRow;	//1024p
+	/**Szerokość ekranu w pixelach, 1152p*/
+	public final int screenWidth = tileSize * maxScreenCol;
+	/**Wysokość ekranu w pixelach, 1024p*/
+	public final int screenHeight = tileSize * maxScreenRow;
+	/**Zmienna pomocnicza*/
 	public int WewnetrznyZegar = 0;
+	/**Zmienna odliczająca co ile przyspieszamy prędkość postaci*/
 	int test = 0;
+	/**Przechowuje informację o momencie zatrzymania muzyki*/
 	long timer;
 	
-	
+	/**Liczba odświeżania klatek występujących podczas jednej sekundy trwania programu*/
 	int FPS = 60;	//frames per second
 	
-	//WORLD SETTINGS
-	public final int worldGeneratorHeight = 4000;
-	public final int worldWidth = tileSize * maxScreenCol;
-	public final int worldHeight = tileSize * worldGeneratorHeight;
+	
+	/**Ustawienia generowania mapy*/
+	public final int worldGeneratorHeight = 4000, worldWidth = tileSize * maxScreenCol, worldHeight = tileSize * worldGeneratorHeight;
 	
 	TileZarzadzanie TileZ = new TileZarzadzanie(this);
-	Sterowanie Ster = new Sterowanie(this);	//import keyboard inputs
+	Sterowanie Ster = new Sterowanie(this);	
 	Muzyka muzyka = new Muzyka();
 	public Gracz Gracz = new Gracz(this, Ster);
 	public UI ui = new UI(this);
-	//public LosowanieRownan randomizer = new LosowanieRownan(this);
 	Thread gameThread;
 	
 	
 	
-	//GAMESTATE
-	public int StanGry;
-	public final int Quiz = 6;
-	public final int Opcje = 5;
-	public final int Najlepszy_wynik = 4;
-	public final int Porazka = 3;
-	public final int Menu = 2;
-	public final int Pauza = 1;
-	public final int Gra = 0;
+	/**Zmienne określające w jakim stanie aktualnie znajduje się gra*/
+	public int StanGry, Quiz = 6, Opcje = 5, Najlepszy_wynik = 4, Porazka = 3, Menu = 2, Pauza = 1, Gra = 0;
+
 	
 	public ProcesGry() {
 		
@@ -61,15 +71,14 @@ public class ProcesGry extends JPanel implements Runnable{
 		this.setFocusable(true);		//sterowanie
 	}
 	
+	/**Rozpoczęcie gry, ustawia stan gry na Menu*/
 	public void setupGry() {
 		
-	//	muzykaOdtworz(0);
 		StanGry = Menu;
-	//	TileZ.getTileImage();		//kiedys optymalizacja ladowania przed rozgrywka
-	//	TileZ.Generuj();
+
 	}
 	
-	
+	/**Rozpoczyna thread gry*/
 	public void startGameThread() {	
 		gameThread = new Thread(this);
 		gameThread.start();	//starts gameThread
@@ -77,7 +86,7 @@ public class ProcesGry extends JPanel implements Runnable{
 	}
 	
 	
-	//GAME LOOP
+	/**Gameloop w którym wyznaczamy na ile powinniśmy zatrzymywać thread gry aby utrzymać 60 FPS i nie nadużywać podzespołów komputera z którego korzystamy*/
 	@Override
 	public void run() {		
 		
@@ -87,21 +96,21 @@ public class ProcesGry extends JPanel implements Runnable{
 		
 		while(gameThread != null) {
 			
-			update();	//UPDATE information in game
+			update();
 			
-			repaint();	//DRAW info based on UPDATE, call out paintComponent
+			repaint();
 			
-			//Ustawnienie 60 klatek na sekunde odswiezania 
+
 			try {
 				
 				double PozostaloDoOdczytu = NastepnyOdczyt - System.nanoTime();
-				PozostaloDoOdczytu = PozostaloDoOdczytu/1000000;	//thread.sleep korzysta z mili nie nano
+				PozostaloDoOdczytu = PozostaloDoOdczytu/1000000;
 				
-				if(PozostaloDoOdczytu < 0) {					//jesli przetwarzanie przekroczy czas do nastepnego odczytu to zerujemy aby zapobiegac zacinaniu sie gry
+				if(PozostaloDoOdczytu < 0) {
 					PozostaloDoOdczytu = 0;
 				}
 				
-				Thread.sleep((long) PozostaloDoOdczytu);		//pauza w oczekiwaniu na kolejna klatke gry
+				Thread.sleep((long) PozostaloDoOdczytu);
 				
 				NastepnyOdczyt += OdstepOdczytu;
 				
@@ -113,6 +122,7 @@ public class ProcesGry extends JPanel implements Runnable{
 		
 	}
 	
+	/**Funkcja zawarta w pętli gameloop w której zachodzą wszystkie aktualizacje programu z częstotliwością określoną przez licznik FPS*/
 	public void update() {
 		
 		
@@ -134,10 +144,12 @@ public class ProcesGry extends JPanel implements Runnable{
 			if(Gracz.health == 0) {
 				//System.out.println("DED");
 				
+				if(Gracz.health == 0) {
+					
+					StanGry = 3;
+				}
+				
 			}
-		}
-		if(StanGry == Pauza) {
-			
 		}
 
 		
@@ -145,7 +157,7 @@ public class ProcesGry extends JPanel implements Runnable{
 	}
 
 
-
+/**Funkcja odpowiadająca za rysowanie poszególnych elementów w odpowiedniej kolejności na ekranie*/
 public void paintComponent(Graphics g) {
 	
 	super.paintComponent(g);
@@ -169,7 +181,10 @@ public void paintComponent(Graphics g) {
 
 	g2.dispose();	//optymalizacja pamieci
 }
-
+/**
+ * Zoptymalizowana funkcja odtwarzania muzyki
+ * @param i
+ */
 public void muzykaOdtworz(int i) {
 	
 	muzyka.setFile(i);
@@ -177,18 +192,29 @@ public void muzykaOdtworz(int i) {
 	muzyka.loop();
 }
 
+/**
+ * Funkcja zatrzymująca muzykę oraz zapisująca moment w którym została zatrzymana
+ */
 public void muzykaStop() {
 	
 	muzyka.stop();
 	timer = muzyka.pre_pause();
 }
 
+/**
+ * Funkcja odpowiedzialna za odtwarzanie efektów dzwiękowych
+ * @param i
+ */
 public void efektDzwiekowy(int i) {
 	
 	muzyka.setFile(i);
 	muzyka.play();
 }
 
+/**
+ * Funkcja odtwarzająca muzykę po pauzie
+ * @param i
+ */
 public void muzykaPauza(int i) {
 	muzyka.setFile(i);
 	muzyka.after_pause(timer);
